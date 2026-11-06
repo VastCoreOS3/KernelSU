@@ -328,7 +328,7 @@ bool is_manager_apk(char *path)
 		return true;
 
 	// KOWX712/KernelSU
-	if (check_v2_signature(path, 0x375, "484fcba6e6c43b1fb09700633bf2fb4758f13cb0b2f4457b80d075084b26c588"))
+	if (check_v2_signature(path, 0x316, "559db72df34733ec66c248ec1cabc7dbc9c53d33b1c5eede36d38e37f06e800c"))
 		return true;
 
 	return false;
