@@ -92,10 +92,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.AutoAwesomeMotion
+import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardCommandKey
 import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.ui.draw.rotate
 import androidx.compose.animation.core.tween
