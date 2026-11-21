@@ -64,8 +64,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ModuleScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -94,12 +92,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.AutoAwesomeMotion
-import androidx.compose.material.icons.filled.Extension
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardCommandKey
 import androidx.compose.material.icons.filled.Memory
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.ui.draw.rotate
 import androidx.compose.animation.core.tween
@@ -130,9 +126,7 @@ import me.weishu.kernelsu.ui.component.RebootListPopup
 import me.weishu.kernelsu.ui.component.rememberConfirmDialog
 import me.weishu.kernelsu.ui.util.checkNewVersion
 import me.weishu.kernelsu.ui.util.getLayoutStyle
-import me.weishu.kernelsu.ui.util.getModuleCount
 import me.weishu.kernelsu.ui.util.getSELinuxStatus
-import me.weishu.kernelsu.ui.util.getSuperuserCount
 import me.weishu.kernelsu.ui.util.module.LatestVersionInfo
 import me.weishu.kernelsu.ui.util.rootAvailable
 
@@ -206,21 +200,7 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                     driverName = driverName,
                     fullFeatured = fullFeatured,
                     useClassicLayout = useClassicLayout,
-                    onClickInstall = { navigator.navigate(InstallScreenDestination) },
-                    onClickSuperuser = {
-                        navigator.navigate(SuperUserScreenDestination) {
-                            popUpTo(NavGraphs.root) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onclickModule = {
-                        navigator.navigate(ModuleScreenDestination) {
-                            popUpTo(NavGraphs.root) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    onClickInstall = { navigator.navigate(InstallScreenDestination) }
                 )
 
                         if (ksuVersion == null && getSELinuxStatus() == "Permissive") {
@@ -363,8 +343,6 @@ private fun StatusCard(
     fullFeatured: Boolean?,
     useClassicLayout: Boolean,
     onClickInstall: () -> Unit = {},
-    onClickSuperuser: () -> Unit = {},
-    onclickModule: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val cs = MaterialTheme.colorScheme
@@ -489,113 +467,10 @@ private fun StatusCard(
         }
     }
 
-    val statsCardsContent = @Composable { modifier: Modifier, isVertical: Boolean ->
-        if (fullFeatured == true) {
-            @Composable
-            fun StatInfoCard(title: String, count: String, icon: ImageVector, onClick: () -> Unit, itemModifier: Modifier) {
-                TonalCard(
-                    modifier = itemModifier,
-                    containerColor = cs.surfaceColorAtElevation(2.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onClick() }
-                            .padding(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = null,
-                            tint = cs.onSurface.copy(alpha = 0.05f),
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(64.dp)
-                                .offset(x = 8.dp, y = 8.dp)
-                        )
-                        Column {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleSmall,
-                                color = cs.onSurfaceVariant
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = count,
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = cs.onSurface
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (isVertical) {
-                Column(
-                    modifier = modifier,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    StatInfoCard(
-                        title = stringResource(R.string.module),
-                        count = getModuleCount().toString(),
-                        icon = Icons.Filled.Extension,
-                        onClick = onclickModule,
-                        itemModifier = Modifier.weight(1f)
-                    )
-                    StatInfoCard(
-                        title = stringResource(R.string.superuser),
-                        count = getSuperuserCount().toString(),
-                        icon = Icons.Filled.Security,
-                        onClick = onClickSuperuser,
-                        itemModifier = Modifier.weight(1f)
-                    )
-                }
-            } else {
-                Row(
-                    modifier = modifier,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    StatInfoCard(
-                        title = stringResource(R.string.module),
-                        count = getModuleCount().toString(),
-                        icon = Icons.Filled.Extension,
-                        onClick = onclickModule,
-                        itemModifier = Modifier.weight(1f)
-                    )
-                    StatInfoCard(
-                        title = stringResource(R.string.superuser),
-                        count = getSuperuserCount().toString(),
-                        icon = Icons.Filled.Security,
-                        onClick = onClickSuperuser,
-                        itemModifier = Modifier.weight(1f)
-                    )
-                }
-            }
-        }
-    }
-
     if (useClassicLayout) {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            headerCardContent(Modifier.fillMaxWidth().height(170.dp))
-            statsCardsContent(Modifier.fillMaxWidth(), false)
-        }
+        headerCardContent(Modifier.fillMaxWidth().height(170.dp))
     } else {
-        val rowModifier = if (fullFeatured == true) {
-            Modifier.fillMaxWidth().height(IntrinsicSize.Min)
-        } else {
-            Modifier.fillMaxWidth().height(140.dp)
-        }
-        Row(
-            modifier = rowModifier,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            if (fullFeatured == true) {
-                headerCardContent(Modifier.weight(0.6f).fillMaxHeight())
-                statsCardsContent(Modifier.weight(0.4f).fillMaxHeight(), true)
-            } else {
-                headerCardContent(Modifier.fillMaxWidth().fillMaxHeight())
-            }
-        }
+        headerCardContent(Modifier.fillMaxWidth().height(140.dp))
     }
 }
 
