@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="home">主页</string>
     <string name="home_not_installed">未安装</string>
@@ -58,7 +58,7 @@
     <string name="home_support_title">支持开发</string>
     <string name="home_support_content">KernelSU 将保持免费开源，向开发者捐赠以表示支持。</string>
     <string name="home_gki_warning">自 v3.0.0 起 GKI 工作模式将仅用于测试环境，我们不建议用于日常使用，也不再提供镜像文件。</string>
-    <string name="about_source_code"><![CDATA[在 %1$s 查看源码<br/>加入我们的 %2$s 频道<br/>加入我们的 <b><a href="https://pd.qq.com/s/8lipl1brp">QQ</a></b> 频道]]></string>
+    <string name="about_source_code">在 %1$s 查看源码&lt;br/&gt;加入我们的 %2$s 频道&lt;br/&gt;加入我们的 &lt;b&gt;&lt;a href="https://pd.qq.com/s/8lipl1brp"&gt;QQ&lt;/a&gt;&lt;/b&gt; 频道</string>
     <string name="profile_default">默认</string>
     <string name="profile_template">模版</string>
     <string name="profile_custom">自定义</string>
@@ -243,4 +243,62 @@
     <string name="lkm_variant_standard">标准版 (MamboSU)</string>
     <string name="lkm_variant_custom">自定义文件</string>
     <string name="lkm_variant_none">无</string>
+    <string name="allow_shell">允许 Shell</string>
+    <string name="allow_shell_summary">允许标准 Shell 访问</string>
+    <string name="app_interface_scale">应用界面缩放</string>
+    <string name="app_name">KernelSU</string>
+    <string name="app_name_mambo">MamboSU</string>
+    <string name="app_profile_mount_profile">挂载配置</string>
+    <string name="app_profile_template_export_success">模板导出成功</string>
+    <string name="background_custom">自定义</string>
+    <string name="background_default">默认</string>
+    <string name="background_image">背景图片</string>
+    <string name="card_layout_title">卡片布局</string>
+    <string name="enable_adb">启用 ADB</string>
+    <string name="enable_adb_summary">安装后启用 USB 调试（ADB）</string>
+    <string name="feature_status_managed_summary">此功能由模块管理。</string>
+    <string name="feature_status_unsupported_summary">内核不支持此功能。</string>
+    <string name="floating_nav_gesture_summary">启用悬浮导航栏上的手势滑动操作</string>
+    <string name="floating_nav_gesture_title">悬浮导航栏手势</string>
+    <string name="floating_nav_summary">Material 3 Expressive 风格的悬浮胶囊导航栏</string>
+    <string name="floating_nav_title">悬浮导航栏</string>
+    <string name="header_choose_image">选择其他图片</string>
+    <string name="header_custom">自定义</string>
+    <string name="header_custom_summary">更改应用默认的顶部图片</string>
+    <string name="header_custom_title">自定义顶部图片</string>
+    <string name="header_default">默认</string>
+    <string name="header_image">顶部图片</string>
+    <string name="hide_home_learn_summary">隐藏主页上的指南卡片</string>
+    <string name="hide_home_learn_title">隐藏“了解 KernelSU”</string>
+    <string name="hide_home_support_summary">隐藏主页上的捐赠卡片</string>
+    <string name="hide_home_support_title">隐藏“支持我们”</string>
+    <string name="home_android">Android 版本</string>
+    <string name="home_cards_title">主页卡片</string>
+    <string name="home_show_more">显示更多</string>
+    <string name="hook_mode">Hook 模式</string>
+    <string name="layout_classic">经典</string>
+    <string name="layout_modern">现代</string>
+    <string name="nav_bar_title">导航栏</string>
+    <string name="profile">应用配置</string>
+    <string name="profile_flags_desc_no_new_privs">阻止此应用配置中的进程通过 KernelSU 进一步提升权限。</string>
+    <string name="quick_shell">快捷终端</string>
+    <string name="quick_shell_clear_logs">清除日志</string>
+    <string name="quick_shell_commands">命令</string>
+    <string name="quick_shell_input_command">输入命令</string>
+    <string name="quick_shell_run">运行</string>
+    <string name="quick_shell_stop_command">停止命令</string>
+    <string name="quick_shell_summary">运行快捷终端命令</string>
+    <string name="safe_mode_module_disabled">安全模式下已禁用模块安装</string>
+    <string name="settings_adb_root">ADB Root</string>
+    <string name="settings_adb_root_summary">以 Root 权限运行 adbd 守护进程</string>
+    <string name="settings_selinux_hide">隐藏 SELinux 修改</string>
+    <string name="settings_selinux_hide_failed">错误：%d</string>
+    <string name="settings_selinux_hide_reboot_required">重启后生效</string>
+    <string name="settings_selinux_hide_summary">通过 selinuxfs 防止应用检测到 SELinux 修改</string>
+    <string name="sulog_filter_daemon_restart">守护进程重启</string>
+    <string name="sulog_filter_ioctl_grant_root">授予 Root 权限</string>
+    <string name="sulog_filter_root_execve">Root 进程执行</string>
+    <string name="sulog_filter_sucompat">经典 SU</string>
+    <string name="ui_scale_summary">调整应用内部元素的显示大小。</string>
+    <string name="ui_scale_title">界面缩放（DPI）</string>
 </resources>
