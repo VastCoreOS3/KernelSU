@@ -1,5 +1,4 @@
 package me.weishu.kernelsu.ui.screen
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -47,14 +46,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Brightness1
 import androidx.compose.material.icons.filled.Brightness3
 import androidx.compose.material.icons.filled.Brightness4
 import androidx.compose.material.icons.filled.Brightness7
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -114,9 +111,7 @@ import me.weishu.kernelsu.ui.theme.ColorMode
 import me.weishu.kernelsu.ui.theme.ThemeController
 import me.weishu.kernelsu.ui.util.clearHeaderImage
 import me.weishu.kernelsu.ui.util.getHeaderImage
-import me.weishu.kernelsu.ui.util.getLayoutStyle
 import me.weishu.kernelsu.ui.util.saveHeaderImage
-import me.weishu.kernelsu.ui.util.setLayoutStyle
 
 private val keyColorOptions = listOf(
     Color(0xFF1A73E8).toArgb(),
@@ -128,7 +123,6 @@ private val keyColorOptions = listOf(
     Color(0xFFE91E63).toArgb(),
     Color(0xFF795548).toArgb(),
 )
-
 
 @Composable
 private fun SettingsGroupCard(
@@ -156,11 +150,9 @@ private fun SettingsGroupCard(
 fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
     val context = LocalContext.current
     val colorScheme = MaterialTheme.colorScheme
-
     var hasCustomHeader by rememberSaveable {
         mutableStateOf(context.getHeaderImage() != null)
     }
-
     val uCropLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -176,7 +168,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
             }
         }
     }
-
     val imagePicker = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
@@ -185,14 +176,11 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                 uri,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-
             var isGif = false
             val mimeType = context.contentResolver.getType(uri)
-
             if (mimeType?.contains("gif", ignoreCase = true) == true) {
                 isGif = true
             } else {
-                // Fallback
                 context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                     val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
                     if (nameIndex != -1 && cursor.moveToFirst()) {
@@ -203,53 +191,42 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     }
                 }
             }
-
             if (isGif) {
                 context.saveHeaderImage(uri.toString())
                 hasCustomHeader = true
             } else {
                 val destinationUri = Uri.fromFile(File(context.cacheDir, "header_cropped_${System.currentTimeMillis()}.jpg"))
-
                 val options = UCrop.Options().apply {
                     setToolbarColor(colorScheme.surface.toArgb())
                     setStatusBarColor(colorScheme.surface.toArgb())
                     setToolbarWidgetColor(colorScheme.onSurface.toArgb())
                     setToolbarTitle(context.getString(R.string.header_choose_image))
-
                     setActiveControlsWidgetColor(colorScheme.primary.toArgb())
                     setDimmedLayerColor(colorScheme.scrim.copy(alpha = 0.8f).toArgb())
                     setRootViewBackgroundColor(colorScheme.surface.toArgb())
-
                     setCropFrameColor(colorScheme.primary.toArgb())
                     setCropGridColor(colorScheme.primary.copy(alpha = 0.5f).toArgb())
-
                     setShowCropGrid(false)
                     setHideBottomControls(false)
                     setFreeStyleCropEnabled(true)
                 }
-
                 val uCropIntent = UCrop.of(uri, destinationUri)
-                    // .withAspectRatio(16f, 9f) // Remove If you Want Lock Aspect Ratio To 16:9
                     .withOptions(options)
                     .getIntent(context)
-
                 uCropLauncher.launch(uCropIntent)
             }
-
         } else {
             if (context.getHeaderImage() == null) {
                 hasCustomHeader = false
             }
         }
     }
-
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     var appSettings by remember { mutableStateOf(ThemeController.getAppSettings(context)) }
     var currentColorMode by remember { mutableStateOf(appSettings.colorMode) }
     var currentKeyColor by remember { mutableIntStateOf(appSettings.keyColor) }
     var dpiScale by remember { mutableFloatStateOf(prefs.getFloat("app_dpi_scale", 1.0f)) }
     var enableFloatingNav by rememberSaveable { mutableStateOf(prefs.getBoolean("enable_floating_navbar", false)) }
-    var useClassicLayout by remember { mutableStateOf(context.getLayoutStyle()) }
 
     Scaffold(
         topBar = {
@@ -274,18 +251,16 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val isDark = currentColorMode.getDarkThemeValue(isSystemInDarkTheme())
-            
+
             Spacer(modifier = Modifier.height(4.dp))
-            
+
             ThemePreviewCard(
-                keyColor = currentKeyColor, 
+                keyColor = currentKeyColor,
                 isDark = isDark,
                 hasCustomHeader = hasCustomHeader,
                 enableFloatingNav = enableFloatingNav,
-                useClassicLayout = useClassicLayout,
                 dpiScale = dpiScale
             )
-
             val scrollState = rememberScrollState()
             Row(
                 modifier = Modifier
@@ -304,7 +279,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                         prefs.edit { putInt("key_color", 0) }
                     }
                 )
-
                 // Color options
                 keyColorOptions.forEachIndexed { _, color ->
                     ColorButton(
@@ -319,7 +293,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                 }
                 Spacer(modifier = Modifier.width(4.dp))
             }
-
             SettingsGroupCard(title = stringResource(R.string.settings_theme)) {
                 val options = listOf(
                     ColorMode.SYSTEM to stringResource(R.string.settings_theme_mode_system),
@@ -327,7 +300,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     ColorMode.DARK to stringResource(R.string.settings_theme_mode_dark),
                     ColorMode.DARKAMOLED to stringResource(R.string.settings_theme_mode_dark)
                 )
-
                 options.chunked(4).forEach { rowOptions ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -365,10 +337,8 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     }
                 }
             }
-            
+
             SettingsGroupCard(title = stringResource(R.string.ui_scale_title)) {
-
-
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -394,10 +364,10 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                             modifier = Modifier.padding(start = 16.dp)
                         )
                     }
-                    
+
                     Slider(
                         value = dpiScale,
-                        onValueChange = { newValue -> 
+                        onValueChange = { newValue ->
                             dpiScale = (newValue * 20).roundToInt() / 20f
                         },
                         onValueChangeFinished = {
@@ -409,7 +379,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     )
                 }
             }
-
             ExpressiveList(
                 title = stringResource(R.string.header_image),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -444,7 +413,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     }
                 }
             )
-
             ExpressiveList(
                 title = stringResource(R.string.nav_bar_title),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -477,55 +445,12 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                 }
             )
 
-            SettingsGroupCard(title = stringResource(R.string.card_layout_title)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween)
-                ) {
-
-                    val layoutOptions = listOf(true, false) // True = Classic, False = Modern
-
-                    layoutOptions.forEachIndexed { index, isClassic ->
-                        ToggleButton(
-                            checked = useClassicLayout == isClassic,
-                            onCheckedChange = { checked ->
-                                if (!checked) return@ToggleButton
-                                useClassicLayout = isClassic
-                                context.setLayoutStyle(isClassic)
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .semantics { role = Role.RadioButton },
-                            shapes = when (index) {
-                                0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                                layoutOptions.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                                else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                            }
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = if (isClassic) Icons.AutoMirrored.Filled.ViewList else Icons.Filled.ViewColumn,
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = if (isClassic) stringResource(R.string.layout_classic) else stringResource(R.string.layout_modern)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
             var hideHomeSupport by rememberSaveable {
                 mutableStateOf(prefs.getBoolean("hide_home_support", false))
             }
             var hideHomeLearn by rememberSaveable {
                 mutableStateOf(prefs.getBoolean("hide_home_learn", false))
             }
-
             ExpressiveList(
                 title = stringResource(R.string.home_cards_title),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -554,7 +479,6 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
                     }
                 )
             )
-
             Spacer(Modifier.height(32.dp))
         }
     }
@@ -564,11 +488,10 @@ fun ThemeSettingsScreen(resultNavigator: ResultBackNavigator<Boolean>) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ThemePreviewCard(
-    keyColor: Int, 
+    keyColor: Int,
     isDark: Boolean,
     hasCustomHeader: Boolean,
     enableFloatingNav: Boolean,
-    useClassicLayout: Boolean,
     dpiScale: Float
 ) {
     val context = LocalContext.current
@@ -585,7 +508,6 @@ private fun ThemePreviewCard(
         }
         else -> rememberDynamicColorScheme(seedColor = Color(keyColor), isDark = isDark)
     }
-
     val systemDensity = androidx.compose.ui.platform.LocalDensity.current
     val customDensity = remember(systemDensity, dpiScale) {
         androidx.compose.ui.unit.Density(
@@ -593,16 +515,15 @@ private fun ThemePreviewCard(
             fontScale = systemDensity.fontScale * dpiScale
         )
     }
-
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.48f) 
+                .fillMaxWidth(0.48f)
                 .aspectRatio(screenRatio),
-            color = colorScheme.surface, 
-            shape = RoundedCornerShape(24.dp), 
-            border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.outlineVariant), 
-            shadowElevation = 8.dp 
+            color = colorScheme.surface,
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.outlineVariant),
+            shadowElevation = 8.dp
         ) {
             CompositionLocalProvider(androidx.compose.ui.platform.LocalDensity provides customDensity) {
                 Column {
@@ -610,7 +531,7 @@ private fun ThemePreviewCard(
                         modifier = Modifier
                             .height(56.dp)
                             .fillMaxWidth()
-                            .background(colorScheme.surfaceContainer), 
+                            .background(colorScheme.surfaceContainer),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         Text(
@@ -621,7 +542,6 @@ private fun ThemePreviewCard(
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
-
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -633,58 +553,17 @@ private fun ThemePreviewCard(
                             modifier = Modifier.padding(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            if (useClassicLayout) {
-                                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    Surface(
-                                        color = colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(16.dp),
-                                        modifier = Modifier.fillMaxWidth().height(72.dp)
-                                    ) {
-                                        Box(modifier = Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.BottomStart) {
-                                            Surface(color = colorScheme.primary, shape = RoundedCornerShape(4.dp), modifier = Modifier.width(36.dp).height(8.dp)) {}
-                                        }
-                                    }
-                                    Surface(
-                                        color = colorScheme.surfaceVariant,
-                                        shape = RoundedCornerShape(16.dp),
-                                        modifier = Modifier.fillMaxWidth().height(56.dp)
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxSize().padding(12.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Box(modifier = Modifier.size(24.dp).background(colorScheme.primaryContainer, CircleShape))
-                                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                                Surface(color = colorScheme.onSurfaceVariant.copy(alpha = 0.8f), shape = RoundedCornerShape(2.dp), modifier = Modifier.width(48.dp).height(6.dp)) {}
-                                                Surface(color = colorScheme.onSurfaceVariant.copy(alpha = 0.4f), shape = RoundedCornerShape(2.dp), modifier = Modifier.width(32.dp).height(4.dp)) {}
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().height(72.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            // 只保留经典布局预览
+                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                Surface(
+                                    color = colorScheme.secondaryContainer,
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier.fillMaxWidth().height(72.dp)
                                 ) {
-                                    Surface(
-                                        color = colorScheme.secondaryContainer,
-                                        shape = RoundedCornerShape(16.dp),
-                                        modifier = Modifier.weight(0.6f).fillMaxHeight()
-                                    ) {
-                                        Box(modifier = Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.BottomStart) {
-                                            Surface(color = colorScheme.primary, shape = RoundedCornerShape(4.dp), modifier = Modifier.width(36.dp).height(8.dp)) {}
-                                        }
-                                    }
-                                    Column(
-                                        modifier = Modifier.weight(0.4f).fillMaxHeight(),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Surface(color = colorScheme.surfaceVariant, shape = RoundedCornerShape(12.dp), modifier = Modifier.weight(1f).fillMaxWidth()) {}
-                                        Surface(color = colorScheme.surfaceVariant, shape = RoundedCornerShape(12.dp), modifier = Modifier.weight(1f).fillMaxWidth()) {}
+                                    Box(modifier = Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.BottomStart) {
+                                        Surface(color = colorScheme.primary, shape = RoundedCornerShape(4.dp), modifier = Modifier.width(36.dp).height(8.dp)) {}
                                     }
                                 }
-                                
                                 Surface(
                                     color = colorScheme.surfaceVariant,
                                     shape = RoundedCornerShape(16.dp),
@@ -705,7 +584,6 @@ private fun ThemePreviewCard(
                             }
                         }
                     }
-
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
                         if (enableFloatingNav) {
                             Surface(
@@ -725,7 +603,6 @@ private fun ThemePreviewCard(
                                     }
                                     Box(modifier = Modifier.size(14.dp).background(colorScheme.onSurfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp)))
                                     Box(modifier = Modifier.size(14.dp).background(colorScheme.onSurfaceVariant.copy(alpha = 0.5f), CircleShape))
-                                    Icon(Icons.Filled.ViewColumn, contentDescription = null, tint = colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(14.dp))
                                 }
                             }
                         } else {
@@ -745,7 +622,6 @@ private fun ThemePreviewCard(
                                     }
                                     Box(modifier = Modifier.size(14.dp).background(colorScheme.onSurfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(4.dp)))
                                     Box(modifier = Modifier.size(14.dp).background(colorScheme.onSurfaceVariant.copy(alpha = 0.5f), CircleShape))
-                                    Icon(Icons.Filled.ViewColumn, contentDescription = null, tint = colorScheme.onSurfaceVariant.copy(alpha = 0.5f), modifier = Modifier.size(16.dp))
                                 }
                             }
                         }
@@ -770,12 +646,10 @@ private fun ColorButton(color: Color, isSelected: Boolean, isDark: Boolean, onCl
         } else {
             rememberDynamicColorScheme(seedColor = color, isDark = isDark)
         }
-
     val innerCornerRadius by animateDpAsState(
         targetValue = if (isSelected) 24.dp else 16.dp,
         label = "innerCornerRadius"
     )
-
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),
@@ -784,20 +658,17 @@ private fun ColorButton(color: Color, isSelected: Boolean, isDark: Boolean, onCl
     ) {
         Box(contentAlignment = Alignment.Center) {
             Canvas(modifier = Modifier.size(48.dp).clip(RoundedCornerShape(innerCornerRadius))) {
-                // Top
                 drawRect(
                     color = colorScheme.primaryContainer,
                     topLeft = Offset(0f, 0f),
                     size = Size(size.width, size.height / 2)
                 )
-                // Bottom
                 drawRect(
                     color = colorScheme.tertiaryContainer,
                     topLeft = Offset(0f, size.height / 2),
                     size = Size(size.width, size.height / 2)
                 )
             }
-
             val scale by animateFloatAsState(targetValue = if (isSelected) 1.1f else 1.0f)
             Box(
                 modifier = Modifier.graphicsLayer {

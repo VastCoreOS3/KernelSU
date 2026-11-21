@@ -13,24 +13,37 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Archive
-import androidx.compose.material.icons.outlined.Block
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.filled.Android
+import androidx.compose.material.icons.filled.AutoAwesomeMotion
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardCommandKey
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,82 +56,56 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Shape
-import androidx.core.content.pm.PackageInfoCompat
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.GlobalScope
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.AutoAwesomeMotion
-import androidx.compose.material.icons.filled.Extension
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardCommandKey
-import androidx.compose.material.icons.filled.Memory
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Link
-import androidx.compose.ui.draw.rotate
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
-import me.weishu.kernelsu.ui.util.getHeaderImage
+import androidx.core.content.pm.PackageInfoCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.ModuleScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.weishu.kernelsu.KernelVersion
 import me.weishu.kernelsu.Natives
 import me.weishu.kernelsu.R
@@ -127,28 +114,25 @@ import me.weishu.kernelsu.ui.LocalBottomBarScrollDown
 import me.weishu.kernelsu.ui.component.RebootListPopup
 import me.weishu.kernelsu.ui.component.rememberConfirmDialog
 import me.weishu.kernelsu.ui.util.checkNewVersion
-import me.weishu.kernelsu.ui.util.getLayoutStyle
+import me.weishu.kernelsu.ui.util.getHeaderImage
 import me.weishu.kernelsu.ui.util.getSELinuxStatus
 import me.weishu.kernelsu.ui.util.module.LatestVersionInfo
 import me.weishu.kernelsu.ui.util.rootAvailable
-
 
 @OptIn(kotlinx.coroutines.DelicateCoroutinesApi::class)
 @Destination<RootGraph>(start = true)
 @Composable
 fun HomeScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
-    
+
     val kernelVersion = getKernelVersion()
     val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
     val isFloating = remember { prefs.getBoolean("enable_floating_navbar", false) }
-    val useClassicLayout = remember { context.getLayoutStyle() }
     val dpiScale = 1.0f
-    
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val sysNavBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val floatingPadding = if (isFloating) sysNavBarPadding + 96.dp else 0.dp
-
     val systemDensity = LocalDensity.current
     val customDensity = remember(systemDensity, dpiScale) {
         Density(
@@ -156,17 +140,14 @@ fun HomeScreen(navigator: DestinationsNavigator) {
             fontScale = systemDensity.fontScale * dpiScale
         )
     }
-
     val bottomBarScrollDown = LocalBottomBarScrollDown.current
     val scrollState = rememberScrollState()
-
     LaunchedEffect(scrollState.value, scrollState.maxValue) {
         if (scrollState.value == 0 || scrollState.maxValue == 0) {
             bottomBarScrollDown.value = false
         }
     }
-
-    CompositionLocalProvider(
+    androidx.compose.runtime.CompositionLocalProvider(
         LocalDensity provides customDensity
     ) {
         Scaffold(
@@ -193,7 +174,6 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                 val fullFeatured = remember(isManager, requireNewKernel, isRootAvailable) {
                     Natives.isFullFeatured()
                 }
-
                 StatusCard(
                     kernelVersion = kernelVersion,
                     ksuVersion = ksuVersion,
@@ -201,22 +181,34 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                     lkmVariant = lkmVariant,
                     driverName = driverName,
                     fullFeatured = fullFeatured,
-                    useClassicLayout = useClassicLayout,
-                    onClickInstall = { navigator.navigate(InstallScreenDestination) }
+                    onClickInstall = { navigator.navigate(InstallScreenDestination) },
+                    onClickSuperuser = {
+                        navigator.navigate(SuperUserScreenDestination) {
+                            popUpTo(NavGraphs.root) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    onclickModule = {
+                        navigator.navigate(ModuleScreenDestination) {
+                            popUpTo(NavGraphs.root) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
-
-                        if (ksuVersion == null && getSELinuxStatus() == "Permissive") {
-                            androidx.compose.material3.Button(
-                                onClick = {
-                                    context.startService(android.content.Intent(context, me.weishu.kernelsu.magica.MagicaService::class.java))
-                                    kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-                                        kotlinx.coroutines.delay(30000)
-                                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
-                                            android.widget.Toast.makeText(context, R.string.jailbreak_timeout, android.widget.Toast.LENGTH_LONG).show()
-                                        }
-                                    }
-                                },
-                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                if (ksuVersion == null && getSELinuxStatus() == "Permissive") {
+                    androidx.compose.material3.Button(
+                        onClick = {
+                            context.startService(android.content.Intent(context, me.weishu.kernelsu.magica.MagicaService::class.java))
+                            GlobalScope.launch(Dispatchers.IO) {
+                                delay(30000)
+                                withContext(Dispatchers.Main) {
+                                    android.widget.Toast.makeText(context, R.string.jailbreak_timeout, android.widget.Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        },
+                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                             containerColor = androidx.compose.material3.MaterialTheme.colorScheme.error,
                             contentColor = androidx.compose.material3.MaterialTheme.colorScheme.onError
                         ),
@@ -225,9 +217,6 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                         Text(stringResource(R.string.home_jailbreak))
                     }
                 }
-//            if (ksuVersion != null && !Natives.isLkmMode) {
-//                WarningCard(stringResource(id = R.string.home_gki_warning))
-//            }
                 if (isManager && requireNewKernel) {
                     WarningCard(
                         stringResource(id = R.string.require_kernel_version).format(
@@ -240,12 +229,6 @@ fun HomeScreen(navigator: DestinationsNavigator) {
                         stringResource(id = R.string.grant_root_failed)
                     )
                 }
-//            val checkUpdate =
-//                LocalContext.current.getSharedPreferences("settings", Context.MODE_PRIVATE)
-//                    .getBoolean("check_update", true)
-//            if (checkUpdate) {
-//                UpdateCard()
-//            }
                 InfoCard()
                 val hideHomeSupport = prefs.getBoolean("hide_home_support", false)
                 val hideHomeLearn = prefs.getBoolean("hide_home_learn", false)
@@ -270,16 +253,13 @@ fun UpdateCard() {
             checkNewVersion()
         }
     }
-
     val currentVersionCode = remember { getManagerVersion(context).second }
     val newVersionCode = newVersion.versionCode
     val newVersionUrl = newVersion.downloadUrl
     val changelog = newVersion.changelog
-
     val uriHandler = LocalUriHandler.current
     val title = stringResource(id = R.string.module_changelog)
     val updateText = stringResource(id = R.string.module_update)
-
     AnimatedVisibility(
         visible = newVersionCode > currentVersionCode,
         enter = fadeIn() + expandVertically(),
@@ -304,7 +284,6 @@ fun UpdateCard() {
     }
 }
 
-
 @Composable
 private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior? = null
@@ -313,7 +292,6 @@ private fun TopBar(
     val isOfficialEnabled = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("enable_official_launcher", false) }
     val appNameId = if (isOfficialEnabled) R.string.app_name else R.string.app_name_mambo
     val managerVersion = remember { getManagerVersion(context) }
-
     TopAppBar(
         title = {
             Column(verticalArrangement = Arrangement.Center) {
@@ -343,12 +321,13 @@ private fun StatusCard(
     lkmVariant: String? = null,
     driverName: String = "",
     fullFeatured: Boolean?,
-    useClassicLayout: Boolean,
     onClickInstall: () -> Unit = {},
+    onClickSuperuser: () -> Unit = {},
+    onclickModule: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val cs = MaterialTheme.colorScheme
-    
+
     val isJailbreak = Natives.isLateLoadMode
     val workingMode = if (isJailbreak) {
         stringResource(R.string.jailbreak_mode)
@@ -361,20 +340,19 @@ private fun StatusCard(
             else -> "GKI"
         }
     }
-
     val statusText = if (ksuVersion != null)
         stringResource(R.string.home_working)
     else
         stringResource(R.string.home_not_installed)
 
-    val titleStyle = if (useClassicLayout) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleMedium
-    val bodyStyle = if (useClassicLayout) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodySmall
+    val titleStyle = MaterialTheme.typography.titleLarge
+    val bodyStyle = MaterialTheme.typography.bodyMedium
 
     val headerImageUri = remember { context.getHeaderImage() }
-    val gradientBrush = remember(cs.surface) { 
-        Brush.verticalGradient(listOf(Color.Transparent, cs.surface.copy(alpha = 0.8f))) 
+    val gradientBrush = remember(cs.surface) {
+        Brush.verticalGradient(listOf(Color.Transparent, cs.surface.copy(alpha = 0.8f)))
     }
-    
+
     val imageLoader = remember(context) {
         ImageLoader.Builder(context)
             .components {
@@ -410,7 +388,6 @@ private fun StatusCard(
                     )
                     Box(modifier = Modifier.matchParentSize().background(gradientBrush))
                 }
-
                 Icon(
                     imageVector = Icons.Filled.KeyboardCommandKey,
                     contentDescription = null,
@@ -420,16 +397,14 @@ private fun StatusCard(
                         .size(140.dp)
                         .offset(x = 16.dp, y = 16.dp)
                 )
-
                 if (headerImageUri != null) {
                     Box(modifier = Modifier.matchParentSize().background(gradientBrush))
                 }
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    verticalArrangement = if (useClassicLayout) Arrangement.Bottom else Arrangement.Top,
+                    verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.Start
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -441,7 +416,6 @@ private fun StatusCard(
                         )
                         if (ksuVersion != null) {
                             Spacer(Modifier.width(8.dp))
-
                             Box(
                                 modifier = Modifier
                                     .background(
@@ -469,10 +443,8 @@ private fun StatusCard(
         }
     }
 
-    if (useClassicLayout) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         headerCardContent(Modifier.fillMaxWidth().height(170.dp))
-    } else {
-        headerCardContent(Modifier.fillMaxWidth().height(140.dp))
     }
 }
 
@@ -514,7 +486,6 @@ fun TonalCard(
 fun LearnMoreCard() {
     val uriHandler = LocalUriHandler.current
     val url = stringResource(R.string.home_learn_kernelsu_url)
-
     TonalCard {
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -541,7 +512,6 @@ fun LearnMoreCard() {
 @Composable
 fun DonateCard() {
     val uriHandler = LocalUriHandler.current
-
     TonalCard {
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -568,18 +538,16 @@ fun DonateCard() {
 @Composable
 private fun InfoCard() {
     val context = LocalContext.current
-    
+
     val developerOptionsEnabled = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE).getBoolean("enable_developer_options", false) }
     val managerVersion = remember { getManagerVersion(context) }
     val myUid = remember { android.os.Process.myUid() }
     val unameRelease = remember { Os.uname().release }
     val unameMachine = remember { Os.uname().machine }
     val selinuxStatus = getSELinuxStatus()
-
     val hookMode = remember { runCatching { Natives.hookMode }.getOrElse { "" } }
     val susfsVersion = remember { runCatching { Natives.susfsVersion }.getOrElse { "" } }
     val driverName = remember { runCatching { Natives.driverName }.getOrElse { "" } }
-
     var expanded by rememberSaveable { mutableStateOf(false) }
     val bottomBarScrollDown = LocalBottomBarScrollDown.current
     LaunchedEffect(expanded) {
@@ -587,13 +555,11 @@ private fun InfoCard() {
             bottomBarScrollDown.value = false
         }
     }
-
     val arrowRotation by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         animationSpec = spring(stiffness = Spring.StiffnessLow),
         label = "arrowRotation"
     )
-
     TonalCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -637,7 +603,6 @@ private fun InfoCard() {
                     }
                 }
             }
-
             Column {
                 if (hookMode.isNotEmpty()) {
                     InfoCardItem(
@@ -647,7 +612,6 @@ private fun InfoCard() {
                     )
                     Spacer(Modifier.height(16.dp))
                 }
-
                 if (susfsVersion.isNotEmpty() && susfsVersion != "Not supported") {
                     InfoCardItem(
                         label = "SuSFS Version",
@@ -656,23 +620,19 @@ private fun InfoCard() {
                     )
                     Spacer(Modifier.height(16.dp))
                 }
-
                 val uidText = if (developerOptionsEnabled) " | UID: $myUid" else ""
                 InfoCardItem(
                     label = stringResource(R.string.home_manager_version),
                     content = "${managerVersion.first} (${managerVersion.second})$uidText",
                     icon = Icons.Filled.AutoAwesomeMotion,
                 )
-
                 Spacer(Modifier.height(16.dp))
-
                 InfoCardItem(
                     label = stringResource(R.string.home_kernel),
                     content = "$unameRelease ($unameMachine)",
                     icon = Icons.Filled.Memory,
                 )
             }
-
             AnimatedVisibility(
                 visible = expanded,
                 enter = fadeIn(animationSpec = tween(400)) + expandVertically(
@@ -690,23 +650,18 @@ private fun InfoCard() {
             ) {
                 Column {
                     Spacer(Modifier.height(16.dp))
-
                     InfoCardItem(
                         label = stringResource(R.string.home_android),
                         content = "${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})",
                         icon = Icons.Filled.Android,
                     )
-
                     Spacer(Modifier.height(16.dp))
-
                     InfoCardItem(
                         label = stringResource(R.string.home_selinux_status),
                         content = selinuxStatus,
                         icon = Icons.Filled.Security,
                     )
-
                     Spacer(Modifier.height(16.dp))
-
                     InfoCardItem(
                         label = stringResource(R.string.home_fingerprint),
                         content = Build.FINGERPRINT,
@@ -714,7 +669,6 @@ private fun InfoCard() {
                     )
                 }
             }
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -728,7 +682,7 @@ private fun InfoCard() {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
                         contentDescription = stringResource(R.string.home_show_more),
-                        modifier = Modifier.rotate(arrowRotation) 
+                        modifier = Modifier.rotate(arrowRotation)
                     )
                 }
             }
@@ -746,40 +700,29 @@ fun getManagerVersion(context: Context): Pair<String, Long> {
 @Composable
 private fun StatusCardPreview() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        // Preview 1: Classic Layout (Working)
         StatusCard(
             kernelVersion = KernelVersion(5, 10, 101),
             ksuVersion = 1,
             lkmMode = null,
-            fullFeatured = false,
-            useClassicLayout = true // Classic
+            fullFeatured = false
         )
-
-        // Preview 2: Modern Layout (Working + Full Featured)
         StatusCard(
             kernelVersion = KernelVersion(5, 10, 101),
             ksuVersion = 20000,
             lkmMode = true,
-            fullFeatured = true,
-            useClassicLayout = false // Modern
+            fullFeatured = true
         )
-
-        // Preview 3: Classic Layout (Not Installed)
         StatusCard(
             kernelVersion = KernelVersion(5, 10, 101),
             ksuVersion = null,
             lkmMode = true,
-            fullFeatured = true,
-            useClassicLayout = true // Classic
+            fullFeatured = true
         )
-
-        // Preview 4: Modern Layout (Unsupported)
         StatusCard(
             kernelVersion = KernelVersion(4, 10, 101),
             ksuVersion = null,
             lkmMode = false,
-            fullFeatured = false,
-            useClassicLayout = false // Modern
+            fullFeatured = false
         )
     }
 }
