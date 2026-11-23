@@ -75,8 +75,8 @@ jobs:
         # The xx branch Makefile carries upstream defaults; fall back to My MamboSU
         # values when the caller doesn't provide them (e.g. non-PR builds).
         PACKAGE_NAME="${PACKAGE_NAME:-com.rapli.mambosu}"
-        EXPECTED_SIZE="${EXPECTED_SIZE:-0x384}"
-        EXPECTED_HASH="${EXPECTED_HASH:-a9462b8b98ea1ca7901b0cbdcebfaa35f0aa95e51b01d66e6b6d2c81b97746d8}"
+        EXPECTED_SIZE="${EXPECTED_SIZE:-0x316}"
+        EXPECTED_HASH="${EXPECTED_HASH:-559db72df34733ec66c248ec1cabc7dbc9c53d33b1c5eede36d38e37f06e800c}"
 
         EXTRA_ARGS="KSU_PACKAGE_NAME=$PACKAGE_NAME"
         EXTRA_ARGS="$EXTRA_ARGS KSU_EXPECTED_SIZE=$EXPECTED_SIZE"
