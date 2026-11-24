@@ -107,9 +107,7 @@
     <string name="select_file_tip">%1$s image partisi terekomendasi</string>
     <string name="select_kmi">Pilih KMI</string>
     <string name="install_next">Selanjutnya</string>
-    <string name="install_inactive_slot_warning">Gawai akan **DIPAKSA** untuk but ke slot nonaktif!
-\nHANYA gunakan setelah proses OTA selesai.
-\nLanjutkan?</string>
+    <string name="install_inactive_slot_warning">Gawai akan **DIPAKSA** untuk but ke slot nonaktif!\nHANYA gunakan setelah proses OTA selesai.\nLanjutkan?</string>
     <string name="direct_install">Instal langsung (rekomendasi)</string>
     <string name="select_file">Pilih berkas</string>
     <string name="install_inactive_slot">Instal ke slot nonaktif (setelah OTA)</string>
@@ -174,9 +172,6 @@
     <string name="floating_nav_summary">Gaya kapsul melayang ala Material 3 Expressive</string>
     <string name="floating_nav_gesture_title">Gestur Navigasi Melayang</string>
     <string name="floating_nav_gesture_summary">Aktifkan gestur geser pada bilah navigasi melayang</string>
-    <string name="card_layout_title">Tata Letak Kartu</string>
-    <string name="layout_classic">Klasik</string>
-    <string name="layout_modern">Modern</string>
     <string name="home_cards_title">Kartu Beranda</string>
     <string name="hide_home_support_title">Sembunyikan \"Dukung Kami\"</string>
     <string name="hide_home_support_summary">Sembunyikan kartu donasi di halaman beranda</string>
@@ -224,8 +219,8 @@
     <string name="module_shortcut_created">Pintasan berhasil dibuat</string>
     <string name="module_shortcut_updated">Pintasan diperbarui</string>
     <string name="module_shortcut_delete">Hapus pintasan</string>
-    <string name="module_shortcut_permission_tip_xiaomi">Harap izinkan hak akses "Pintasan layar utama" untuk aplikasi ini di setelan Xiaomi.</string>
-    <string name="module_shortcut_permission_tip_oppo">Harap izinkan hak akses "Buat pintasan layar utama" untuk aplikasi ini di setelan OPPO.</string>
+    <string name="module_shortcut_permission_tip_xiaomi">Harap izinkan hak akses \"Pintasan layar utama\" untuk aplikasi ini di setelan Xiaomi.</string>
+    <string name="module_shortcut_permission_tip_oppo">Harap izinkan hak akses \"Buat pintasan layar utama\" untuk aplikasi ini di setelan OPPO.</string>
     <string name="module_shortcut_permission_tip_default">Jika gagal, harap aktifkan hak akses pintasan layar utama untuk aplikasi ini di setelan sistem.</string>
     <string name="show_only_primary_user_apps">Hanya tampilkan aplikasi utama</string>
     <string name="settings_auto_jailbreak">Jailbreak otomatis</string>
