@@ -11,6 +11,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -78,6 +79,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
@@ -386,8 +388,15 @@ private fun StatusCard(
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.matchParentSize()
                     )
-                    Box(modifier = Modifier.matchParentSize().background(gradientBrush))
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.header_bg),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
                 }
+                Box(modifier = Modifier.matchParentSize().background(gradientBrush))
                 Icon(
                     imageVector = Icons.Filled.KeyboardCommandKey,
                     contentDescription = null,
@@ -397,9 +406,6 @@ private fun StatusCard(
                         .size(140.dp)
                         .offset(x = 16.dp, y = 16.dp)
                 )
-                if (headerImageUri != null) {
-                    Box(modifier = Modifier.matchParentSize().background(gradientBrush))
-                }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
