@@ -253,7 +253,6 @@
     <string name="background_custom">自定义</string>
     <string name="background_default">默认</string>
     <string name="background_image">背景图片</string>
-    <string name="card_layout_title">卡片布局</string>
     <string name="enable_adb">启用 ADB</string>
     <string name="enable_adb_summary">安装后启用 USB 调试（ADB）</string>
     <string name="feature_status_managed_summary">此功能由模块管理。</string>
@@ -276,8 +275,6 @@
     <string name="home_cards_title">主页卡片</string>
     <string name="home_show_more">显示更多</string>
     <string name="hook_mode">Hook 模式</string>
-    <string name="layout_classic">经典</string>
-    <string name="layout_modern">现代</string>
     <string name="nav_bar_title">导航栏</string>
     <string name="profile">应用配置</string>
     <string name="profile_flags_desc_no_new_privs">阻止此应用配置中的进程通过 KernelSU 进一步提升权限。</string>
