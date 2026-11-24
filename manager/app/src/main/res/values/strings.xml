@@ -225,9 +225,6 @@
     <string name="floating_nav_summary">Material 3 Expressive floating capsule style</string>
     <string name="floating_nav_gesture_title">Floating Navbar Gesture</string>
     <string name="floating_nav_gesture_summary">Enable gesture scrubbing on floating navbar</string>
-    <string name="card_layout_title">Card Layout</string>
-    <string name="layout_classic">Classic</string>
-    <string name="layout_modern">Modern</string>
     <string name="home_cards_title">Home Cards</string>
     <string name="hide_home_support_title">Hide \"Support Us\"</string>
     <string name="hide_home_support_summary">Hide the donation card on the home screen</string>
